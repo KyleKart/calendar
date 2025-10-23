@@ -59,8 +59,17 @@ border:1px solid rgba(255,255,255,0.05);padding:20px;margin-bottom:24px;width:16
 
 <script>
 const monthNames=["Unar","Duen","Tresen","Cuaten","Quinar","Seisen"];
-const holidays={"0-1":"✨","4-61":"🎃","5-54":"🎄","5-55":"🎁","0-51":"🎉","3-37":"🎉"};
 const monthPairs=[[0,1],[2,3],[4,5],[6,7],[8,9],[10,11]];
+const holidays={
+  "0-1":"✨",
+  "4-61":"🎃",
+  "5-54":"🎄",
+  "5-55":"🎁",
+  "0-51":"🎉",
+  "3-37":"🎉",
+  "1-10":"🍄",
+};
+
 const els={
   days:document.getElementById('days'),
   title:document.getElementById('calendar-title'),
