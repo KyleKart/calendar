@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>6-Month Calendar</title>
+<title>Calendar..?</title>
 <style>
 :root {
   --bg:#0b0c0f;
@@ -23,7 +23,8 @@ html,body,#app{
   padding:28px;
 }
 .app{width:100%;max-width:980px;}
-.panel{background:var(--surface);border-radius:var(--card-radius);border:1px solid rgba(255,255,255,0.05);padding:20px;margin-bottom:24px;width:160%;}
+.panel{background:var(--surface);border-radius:var(--card-radius);
+border:1px solid rgba(255,255,255,0.05);padding:20px;margin-bottom:24px;width:160%;}
 .panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
 .month-name{font-size:clamp(24px,4vw,32px);font-weight:700;text-align:center;color:#e6eef8;}
 .weekdays{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-weight:600;font-size:14px;color:var(--muted);margin-bottom:10px;}
@@ -33,10 +34,7 @@ html,body,#app{
 .days>button:focus{outline:3px solid rgb(44,0,72);}
 .days>button.today{background:var(--accent);color:#fff;font-weight:700;}
 .days>button.holiday{background:#2a1830;color:#f5c2ff;font-weight:700;border:1px solid #5c2a80;}
-.nav-link{text-align:center;margin-top:10px;}
-.nav-link a{color:var(--accent);font-weight:700;text-decoration:none;}
-.nav-link a:hover{text-decoration:underline;}
-#conv-form { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+#conv-form{display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
 </style>
 </head>
 <body>
@@ -45,91 +43,91 @@ html,body,#app{
 <section class="panel calendar-panel" aria-labelledby="calendar-title">
   <div class="panel-header">
     <button id="prev" class="nav" aria-label="Previous month">◀</button>
-    <div>
-      <div id="calendar-title" class="month-name" aria-live="polite"></div>
-    </div>
+    <div><div id="calendar-title" class="month-name" aria-live="polite"></div></div>
     <button id="next" class="nav" aria-label="Next month">▶</button>
   </div>
   <div class="grid weekdays" aria-hidden="true">
-    <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+    <div>Mon</div><div>Tue</div><div>Wed</div>
+    <div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
   </div>
   <div id="days" class="grid days" role="grid" aria-label="Days of month"></div>
 </section>
 
-  <form id="conv-form">
-    This is a cursed 6-month calendar. Hope you enjoy!
-  </form>
+<form id="conv-form">This is a cursed 6-month calendar. Hope you enjoy!</form>
 
 </main>
 
 <script>
-const monthNames = ["Unar","Duen","Tresen","Cuaten","Quinar","Seisen"];
-const holidays = {
-  "0-1":"✨","4-61":"🎃","5-54":"🎄","5-55":"🎁","0-51":"🎉","3-37":"🎉"
+const monthNames=["Unar","Duen","Tresen","Cuaten","Quinar","Seisen"];
+const holidays={"0-1":"✨","4-61":"🎃","5-54":"🎄","5-55":"🎁","0-51":"🎉","3-37":"🎉"};
+const monthPairs=[[0,1],[2,3],[4,5],[6,7],[8,9],[10,11]];
+const els={
+  days:document.getElementById('days'),
+  title:document.getElementById('calendar-title'),
+  prev:document.getElementById('prev'),
+  next:document.getElementById('next')
 };
-const monthPairs = [[0,1],[2,3],[4,5],[6,7],[8,9],[10,11]];
-const els = {
-  days: document.getElementById('days'),
-  title: document.getElementById('calendar-title'),
-  prev: document.getElementById('prev'),
-  next: document.getElementById('next')
-};
-let currentMonthIndex = 0, currentYear = new Date().getFullYear();
+let currentMonthIndex=0,currentYear=new Date().getFullYear();
 
 function getMonthLengths(year){
   return monthPairs.map(([a,b])=>{
-    const endA = new Date(year,a+1,0).getDate();
-    const endB = new Date(year,b+1,0).getDate();
-    return endA + endB;
+    const endA=new Date(year,a+1,0).getDate();
+    const endB=new Date(year,b+1,0).getDate();
+    return endA+endB;
   });
 }
+
 function mappedDateOfYear(year,monthIndex,dayInMonth){
-  const [a,b] = monthPairs[monthIndex];
-  const first = new Date(year,a,1);
-  return new Date(first.getTime() + (dayInMonth-1)*86400000);
+  const [a,b]=monthPairs[monthIndex];
+  const first=new Date(year,a,1);
+  return new Date(first.getTime()+(dayInMonth-1)*86400000);
 }
+
 function renderMonthView(year,monthIndex){
-  currentYear = year; currentMonthIndex = monthIndex;
-  const daysInMonth = getMonthLengths(year)[monthIndex];
-  els.days.innerHTML = '';
-  els.title.textContent = `${monthNames[monthIndex]} — ${year}`;
-  const today = new Date();
-  for(let d=1; d<=daysInMonth; d++){
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    const key = `${monthIndex}-${d}`;
-    btn.textContent = holidays[key] || d;
-    const mapped = mappedDateOfYear(year,monthIndex,d);
-    if(mapped.toDateString() === today.toDateString()) btn.classList.add('today');
+  currentYear=year;currentMonthIndex=monthIndex;
+  els.days.innerHTML='';
+  els.title.textContent=`${monthNames[monthIndex]} — ${year}`;
+  
+  const [a,b]=monthPairs[monthIndex];
+  const startDate=new Date(year,a,1);
+  const daysInMonth=getMonthLengths(year)[monthIndex];
+  const startWeekday=(startDate.getDay()+6)%7;
+  const today=new Date();
+  
+  for(let i=0;i<startWeekday;i++){
+    const empty=document.createElement('div');
+    els.days.appendChild(empty);
+  }
+  
+  for(let d=1;d<=daysInMonth;d++){
+    const btn=document.createElement('button');
+    btn.type='button';
+    const key=`${monthIndex}-${d}`;
+    btn.textContent=holidays[key]||d;
+    const mapped=mappedDateOfYear(year,monthIndex,d);
+    if(mapped.toDateString()===today.toDateString()) btn.classList.add('today');
     if(holidays[key]) btn.classList.add('holiday');
     els.days.appendChild(btn);
   }
 }
-function showPrev(){
-  let mi = currentMonthIndex - 1, y = currentYear;
-  if(mi < 0){ mi = 5; y--; }
-  renderMonthView(y, mi);
-}
-function showNext(){
-  let mi = currentMonthIndex + 1, y = currentYear;
-  if(mi > 5){ mi = 0; y++; }
-  renderMonthView(y, mi);
-}
-els.prev.addEventListener('click', showPrev);
-els.next.addEventListener('click', showNext);
+
+function showPrev(){let mi=currentMonthIndex-1,y=currentYear;if(mi<0){mi=5;y--;}renderMonthView(y,mi);}
+function showNext(){let mi=currentMonthIndex+1,y=currentYear;if(mi>5){mi=0;y++;}renderMonthView(y,mi);}
+els.prev.addEventListener('click',showPrev);
+els.next.addEventListener('click',showNext);
 
 function find6MonthIndexAndDay(date){
-  const y = date.getFullYear();
-  const m = date.getMonth();
-  const pairIndex = monthPairs.findIndex(([a,b]) => m === a || m === b);
-  const startOfPair = new Date(y, monthPairs[pairIndex][0], 1);
-  const dayOfPair = Math.floor((date - startOfPair) / (1000*60*60*24)) + 1;
-  return { y, pairIndex, dayOfPair };
+  const y=date.getFullYear(),m=date.getMonth();
+  const pairIndex=monthPairs.findIndex(([a,b])=>m===a||m===b);
+  const startOfPair=new Date(y,monthPairs[pairIndex][0],1);
+  const dayOfPair=Math.floor((date-startOfPair)/(1000*60*60*24))+1;
+  return {y,pairIndex,dayOfPair};
 }
+
 function highlightToday(){
-  const today = new Date();
-  const { y, pairIndex } = find6MonthIndexAndDay(today);
-  renderMonthView(y, pairIndex);
+  const today=new Date();
+  const {y,pairIndex}=find6MonthIndexAndDay(today);
+  renderMonthView(y,pairIndex);
 }
 highlightToday();
 </script>
